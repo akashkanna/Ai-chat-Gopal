@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lets Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="header-content">
+                <div>
+                    <h1>💬 Lets Chat</h1>
+                    <p class="subtitle">Chat with Gopal - Your AI Assistant</p>
+                </div>
+                <button id="themeToggle" class="theme-toggle" title="Toggle Theme">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="chat-messages" id="chatMessages">
+            <!-- Messages will be displayed here -->
+        </div>
+
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    placeholder="Type your message here..." 
+                    autocomplete="off"
+                >
+                <button id="sendBtn" class="send-btn">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Message</h2>
+                <span class="close" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input 
+                    type="text" 
+                    id="editInput" 
+                    placeholder="Edit your message..."
+                    autocomplete="off"
+                >
+            </div>
+            <div class="modal-footer">
+                <button id="saveEditBtn" class="save-btn">Save</button>
+                <button id="cancelEditBtn" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
