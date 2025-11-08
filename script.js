@@ -121,7 +121,8 @@ class ChatApp {
                 "School of Physiotherapy",
                 "School of Paramedical Sciences",
                 "School of Pharmacy",
-                "School of Law",
+                "School of Defence",
+                "School of Social Work",
                 "School of Architecture",
                 "School of Allied Health Sciences"
             ],
@@ -142,7 +143,23 @@ class ChatApp {
                 "Hackathons and research conclaves for students"
             ],
             accreditation: "Established under Tamil Nadu Act No. 19 of 2023. Recognized by UGC. Programs follow AICTE, PCI, BCI, and INC guidelines where applicable",
-            symbolism: "The name 'Takshashila' pays homage to the ancient world's first learning hub — the original Takshashila in Gandhara. It represents the institution's commitment to revive India's ancient educational excellence using modern technology and research"
+            symbolism: "The name 'Takshashila' pays homage to the ancient world's first learning hub — the original Takshashila in Gandhara. It represents the institution's commitment to revive India's ancient educational excellence using modern technology and research",
+            clubs: {
+                commonTime: "Saturday 7-8 PM",
+                list: [
+                    { name: "Arts Club", rooms: ["202", "203"] },
+                    { name: "Media Club", rooms: ["207", "208"] },
+                    { name: "Innopreneur Club", rooms: ["209", "210"] },
+                    { name: "IQ Club", rooms: ["220", "221"] },
+                    { name: "Nature Club", rooms: ["226", "227"] },
+                    { name: "Innovation Club", rooms: ["222", "228"] },
+                    { name: "Coding Club", rooms: ["Phase 1 lab", "Phase 2 lab"] },
+                    { name: "Manasso Club", rooms: ["121", "122"] },
+                    { name: "Robotics Club", rooms: ["120", "126"] },
+                    { name: "Photography Club", rooms: ["124", "125"] },
+                    { name: "Health Club", rooms: ["118", "119"] }
+                ]
+            }
         };
     }
 
@@ -152,7 +169,7 @@ class ChatApp {
         const uniInfo = this.getUniversityInfo();
         
         // TAKSHASHILA UNIVERSITY QUESTIONS - Priority check
-        if (message.match(/(takshashila|university|college|admission|course|program|faculty|school|department|location|address|contact|website|vision|mission|facilities|hostel|library|lab|research|accreditation|ugc|established|founder|promoting|group|manakula|vinayagar)/)) {
+        if (message.match(/(takshashila|university|college|admission|course|program|faculty|school|department|location|address|contact|website|vision|mission|facilities|hostel|library|lab|research|accreditation|ugc|established|founder|promoting|group|manakula|vinayagar|club|clubs|arts club|media club|innopreneur|iq club|nature club|innovation club|coding club|manasso|robotics club|photography club|health club)/)) {
             return this.getUniversityResponse(message, uniInfo);
         }
         
@@ -340,8 +357,82 @@ class ChatApp {
             return `🔹 ${uniInfo.symbolism}`;
         }
         
+        // Clubs information
+        if (msg.match(/(club|clubs|arts|media|innopreneur|iq|nature|innovation|coding|manasso|robotics|photography|health|room.*club|club.*room|club.*time|when.*club|where.*club)/)) {
+            return this.getClubResponse(msg, uniInfo);
+        }
+        
         // General university info
         return `🔹 About ${uniInfo.name}:\n\n${uniInfo.name} is a modern multidisciplinary private university established in ${uniInfo.established}. Located at ${uniInfo.address}, it offers various programs across multiple disciplines.\n\nMotto: "${uniInfo.motto}"\n\nWebsite: ${uniInfo.website}\n\nWhat specific information would you like to know about the university?`;
+    }
+
+    // Get Club-specific responses
+    getClubResponse(message, uniInfo) {
+        const msg = message.toLowerCase();
+        const clubs = uniInfo.clubs;
+        
+        // Check for specific club mentions
+        const clubKeywords = {
+            'arts': 'Arts Club',
+            'media': 'Media Club',
+            'innopreneur': 'Innopreneur Club',
+            'iq': 'IQ Club',
+            'nature': 'Nature Club',
+            'innovation': 'Innovation Club',
+            'coding': 'Coding Club',
+            'manasso': 'Manasso Club',
+            'robotics': 'Robotics Club',
+            'photography': 'Photography Club',
+            'health': 'Health Club'
+        };
+        
+        // Check if asking about a specific club
+        for (const [keyword, clubName] of Object.entries(clubKeywords)) {
+            if (msg.includes(keyword) && msg.match(/(club|room|where|location|when|time)/)) {
+                const club = clubs.list.find(c => c.name === clubName);
+                if (club) {
+                    const roomInfo = club.rooms.length > 1 
+                        ? `Rooms ${club.rooms.join(' and ')}` 
+                        : `Room ${club.rooms[0]}`;
+                    return `🔹 ${clubName}:\n\n📍 Location: ${roomInfo}\n⏰ Meeting Time: ${clubs.commonTime}\n\nAll clubs at Takshashila University meet on ${clubs.commonTime}.`;
+                }
+            }
+        }
+        
+        // Check for room number queries
+        const roomMatch = msg.match(/room\s*(no|number)?\s*(\d+)/);
+        if (roomMatch) {
+            const roomNum = roomMatch[2];
+            const club = clubs.list.find(c => c.rooms.includes(roomNum));
+            if (club) {
+                return `🔹 Room ${roomNum} is used by the ${club.name}.\n\n⏰ Meeting Time: ${clubs.commonTime}`;
+            }
+        }
+        
+        // Check for lab queries (Phase 1 lab, Phase 2 lab)
+        if (msg.match(/(phase\s*[12]\s*lab|lab\s*phase\s*[12])/)) {
+            return `🔹 Coding Club uses Phase 1 lab and Phase 2 lab.\n\n⏰ Meeting Time: ${clubs.commonTime}`;
+        }
+        
+        // Check for time/schedule queries
+        if (msg.match(/(when|time|schedule|timing|meet|meeting).*club/)) {
+            return `🔹 Club Meeting Schedule:\n\n⏰ All clubs meet on: ${clubs.commonTime}\n\nThis is the common time slot for all clubs at Takshashila University.`;
+        }
+        
+        // List all clubs
+        if (msg.match(/(list|all|what|which|available|show).*club/)) {
+            let response = `🔹 Clubs at ${uniInfo.name}:\n\n⏰ Common Meeting Time: ${clubs.commonTime}\n\n`;
+            clubs.list.forEach((club, index) => {
+                const roomInfo = club.rooms.length > 1 
+                    ? `Rooms ${club.rooms.join(' and ')}` 
+                    : `Room ${club.rooms[0]}`;
+                response += `${index + 1}. ${club.name} - ${roomInfo}\n`;
+            });
+            return response;
+        }
+        
+        // General club information
+        return `🔹 Clubs at ${uniInfo.name}:\n\n⏰ All clubs meet on: ${clubs.commonTime}\n\nAvailable clubs:\n${clubs.list.map((c, i) => `${i + 1}. ${c.name}`).join('\n')}\n\nWould you like to know more about a specific club or their room numbers?`;
     }
 
     // Get contextual response based on message content

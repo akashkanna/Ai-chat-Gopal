@@ -8,8 +8,9 @@ A modern, interactive chat application with AI assistant "Gopal" that can answer
 - **CRUD Operations**: Create, Read, Update, and Delete messages
 - **Dark/Light Theme**: Toggle between dark and light themes
 - **Takshashila University Knowledge**: Comprehensive information about the university
+- **Club Information**: Detailed information about all university clubs, their locations, and meeting times
 - **Local Storage**: Messages are saved locally in your browser
-- **Responsive Design**: Works on desktop and mobile devices
+- **Responsive Design**: Fully optimized for desktop, tablet, and mobile devices
 
 ## 🚀 Getting Started
 
@@ -98,6 +99,48 @@ A modern, interactive chat application with AI assistant "Gopal" that can answer
 - "What does Takshashila mean?"
 - "Tell me about the name symbolism"
 - "History of the name"
+
+#### Clubs & Activities
+- "Tell me about the clubs"
+- "What clubs are available?"
+- "List all clubs"
+- "Show me all clubs"
+- "When do clubs meet?"
+- "What is the club meeting time?"
+- "Club schedule"
+- "Where is the Arts Club?"
+- "Arts Club room number"
+- "Where is the Media Club?"
+- "Media Club location"
+- "Where is the Innopreneur Club?"
+- "Innopreneur Club room"
+- "Where is the IQ Club?"
+- "IQ Club room number"
+- "Where is the Nature Club?"
+- "Nature Club location"
+- "Where is the Innovation Club?"
+- "Innovation Club room"
+- "Where is the Coding Club?"
+- "Coding Club location"
+- "Phase 1 lab" 
+- "Phase 2 lab"
+- "Where is the Manasso Club?"
+- "Manasso Club room number"
+- "Where is the Robotics Club?"
+- "Robotics Club location"
+- "Where is the Photography Club?"
+- "Photography Club room"
+- "Where is the Health Club?"
+- "Health Club location"
+- "What club uses room 202?"
+- "What club uses room 207?"
+- "What club uses room 209?"
+- "Room 220 club"
+- "Room 226 club"
+- "Room 121 club"
+- "Room 120 club"
+- "Room 124 club"
+- "Room 118 club"
 
 ### 🗣️ General Conversation
 
