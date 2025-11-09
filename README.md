@@ -8,7 +8,9 @@ A modern, interactive chat application with AI assistant "Gopal" that can answer
 - **CRUD Operations**: Create, Read, Update, and Delete messages
 - **Dark/Light Theme**: Toggle between dark and light themes
 - **Takshashila University Knowledge**: Comprehensive information about the university
+- **Bus Route Information**: Detailed information about all 25 bus routes, stops, timings, and driver contacts
 - **Club Information**: Detailed information about all university clubs, their locations, and meeting times
+- **Personalized Experience**: Remembers your name and uses it throughout the conversation
 - **Local Storage**: Messages are saved locally in your browser
 - **Responsive Design**: Fully optimized for desktop, tablet, and mobile devices
 
@@ -122,7 +124,7 @@ A modern, interactive chat application with AI assistant "Gopal" that can answer
 - "Innovation Club room"
 - "Where is the Coding Club?"
 - "Coding Club location"
-- "Phase 1 lab" 
+- "Phase 1 lab"
 - "Phase 2 lab"
 - "Where is the Manasso Club?"
 - "Manasso Club room number"
@@ -141,6 +143,54 @@ A modern, interactive chat application with AI assistant "Gopal" that can answer
 - "Room 120 club"
 - "Room 124 club"
 - "Room 118 club"
+
+#### Bus Routes & Transportation
+- "Tell me about bus routes"
+- "What bus routes are available?"
+- "List all bus routes"
+- "Show me all bus routes"
+- "Bus transportation"
+- "Route 1"
+- "Route 2"
+- "Route 3"
+- "Thiruvennainallur route"
+- "Villiyanur route"
+- "Koovathur route"
+- "Codallore route"
+- "Panruti route"
+- "Kadapakkam route"
+- "Vandavasi route"
+- "Melmaiyanoor route"
+- "Setharapattu route"
+- "Ananthamangalam route"
+- "Kottakuppam route"
+- "Uthiramerur route"
+- "Uppuvellore route"
+- "Madagadipattu route"
+- "Thirukoilur route"
+- "Kiliyanoor route"
+- "Nadukuppam route"
+- "Kilpennathur route"
+- "Rettanai route"
+- "Thellar route"
+- "Cheyyur route"
+- "Chengalpattu route"
+- "Tindivanam route"
+- "Villupuram route"
+- "What is my pickup location?"
+- "Bus stop near me"
+- "Pickup time for [location]"
+- "Bus timing for [location]"
+- "Driver contact for route [number]"
+- "Incharge contact for route [number]"
+- "Bus schedule"
+- "Transportation details"
+- "SMVCH Hospital bus"
+- "TV Nallur bus stop"
+- "JIPMER bus"
+- "Gingee bus stand"
+- "Bus from [town name]"
+- "How to reach university by bus?"
 
 ### 🗣️ General Conversation
 
@@ -335,10 +385,13 @@ Takshashila University is a modern multidisciplinary private university located 
 
 Gopal is your friendly AI assistant who can:
 - Answer questions about Takshashila University
+- Provide detailed bus route information including stops, timings, and driver contacts
+- Share club information and meeting schedules
 - Have general conversations
 - Help with math calculations
 - Discuss various topics
 - Provide information and assistance
+- Remember your name for a personalized experience
 
 ## 📝 Notes
 

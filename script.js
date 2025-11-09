@@ -4,6 +4,7 @@ class ChatApp {
         this.messages = this.loadMessages();
         this.editingMessageId = null;
         this.aiName = 'Gopal';
+        this.userName = this.loadUserName();
         this.currentTheme = this.loadTheme();
         this.init();
         this.applyTheme(this.currentTheme);
@@ -54,6 +55,13 @@ class ChatApp {
             return;
         }
 
+        // Check if we need to capture user name (before adding message)
+        const isFirstMessage = this.messages.length === 1;
+        const wasAskingForName = isFirstMessage && 
+                                 this.messages[0].sender === 'ai' && 
+                                 this.messages[0].text.includes('tell me your name') &&
+                                 !this.userName;
+        
         // Add user message
         const userMessage = {
             id: Date.now().toString(),
@@ -73,6 +81,26 @@ class ChatApp {
 
         // Get AI response after a short delay
         setTimeout(() => {
+            if (wasAskingForName) {
+                // Extract name from message (take first word)
+                const name = text.split(/\s+/)[0].trim();
+                if (name && name.length > 0 && name.length < 50 && !name.match(/^\d+$/)) {
+                    this.userName = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+                    this.saveUserName();
+                    
+                    const welcomeResponse = {
+                        id: (Date.now() + 1).toString(),
+                        text: `Nice to meet you, ${this.userName}! I'm ${this.aiName}, your AI assistant. I'm here to help you with anything you need! 🎓\n\nI can help you with:\n• Information about Takshashila University\n• Bus route details and timings\n• Club information\n• General questions and conversations\n• Math calculations\n• Various topics like technology, education, sports, and more\n\nFeel free to ask me anything! What would you like to know?`,
+                        sender: 'ai',
+                        timestamp: new Date().toISOString()
+                    };
+                    this.messages.push(welcomeResponse);
+                    this.saveMessages();
+                    this.displayMessages();
+                    this.scrollToBottom();
+                    return;
+                }
+            }
             this.getAIResponse(text);
         }, 500);
     }
@@ -159,7 +187,636 @@ class ChatApp {
                     { name: "Photography Club", rooms: ["124", "125"] },
                     { name: "Health Club", rooms: ["118", "119"] }
                 ]
-            }
+            },
+            busRoutes: [
+                {
+                    routeNumber: 1,
+                    routeName: "THIRUVENNAINALLUR",
+                    driver: "SIVA",
+                    driverMobile: "811102571",
+                    incharge: "MR.M.VINOTH",
+                    inchargeMobile: "9894701416",
+                    stops: [
+                        { stage: "SMVCH HOSPITAL", time: "7.10" },
+                        { stage: "TV NALLUR BUS STOP", time: "7.14" },
+                        { stage: "FRIENDS BAKKERY", time: "7.18" },
+                        { stage: "GANDHI KUPPAM", time: "7.20" },
+                        { stage: "INDANE GAS", time: "7.21" },
+                        { stage: "KANARAMPATTU", time: "7.22" },
+                        { stage: "PUTHUKOIL", time: "7.25" },
+                        { stage: "KURANOOR", time: "7.26" },
+                        { stage: "ALANKUPPAM", time: "7.28" },
+                        { stage: "ALANKUPPAM PILLAIYAR KOIL", time: "7.29" },
+                        { stage: "ARASUR", time: "7.30" },
+                        { stage: "PERANGIYUR", time: "7.33" },
+                        { stage: "PAITHAMPADI", time: "7.34" },
+                        { stage: "KUCHIPALAYAM", time: "7.36" },
+                        { stage: "PIDAGAM", time: "7.37" },
+                        { stage: "JANAKIPURAM", time: "7.40" },
+                        { stage: "PERIYAR QUARTERS", time: "7.42" },
+                        { stage: "TATA MOTORS", time: "7.43" },
+                        { stage: "ESSAR BUNK", time: "7.44" },
+                        { stage: "TACW COLLAGE", time: "7.56" },
+                        { stage: "NATRAJ ITI", time: "7.58" },
+                        { stage: "COURT VPM", time: "8.00" },
+                        { stage: "SIGNAL", time: "8.03" },
+                        { stage: "PILLAIYAR KOIL", time: "8.05" },
+                        { stage: "MARIYAMMAN KOIL", time: "8.07" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 2,
+                    routeName: "VILLIYANUR",
+                    driver: "TAMILARASAN",
+                    driverMobile: "9342093442",
+                    incharge: "MR.G.RAJA",
+                    inchargeMobile: "9600572422",
+                    stops: [
+                        { stage: "VILLIYANUR BYEBASS", time: "7.15" },
+                        { stage: "PATHUKANNU ROAD", time: "7.18" },
+                        { stage: "PERAMBAI ROAD", time: "7.20" },
+                        { stage: "SULTHANPETTAI", time: "7.23" },
+                        { stage: "AGB HOSPITAL", time: "7.28" },
+                        { stage: "ARUMPARTHAPURAM", time: "7.33" },
+                        { stage: "MOOLAKULAM", time: "7.38" },
+                        { stage: "RETTIYARPALAYAM", time: "7.42" },
+                        { stage: "UZAVERKARAI", time: "7.46" },
+                        { stage: "INDIRAGANTHI STATUE", time: "7.50" },
+                        { stage: "MURUGA THETARE", time: "7.55" },
+                        { stage: "SUBBAIYA MADAPAM", time: "8.00" },
+                        { stage: "JIPMER", time: "8.05" },
+                        { stage: "THIRUCITTAMPALAM KOOT ROAD", time: "8.10" },
+                        { stage: "PAPPANCHAVADI", time: "8.12" },
+                        { stage: "B D O OFFICE", time: "8.15" },
+                        { stage: "CHINNA KATRAMPAKKAM", time: "8.25" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 3,
+                    routeName: "KOOVATHUR",
+                    driver: "VENKATESAN",
+                    driverMobile: "9600001278",
+                    incharge: "MR.S.SHARMILA",
+                    inchargeMobile: "9626899103",
+                    stops: [
+                        { stage: "KOOVATHUR", time: "7.00" },
+                        { stage: "NELVOY PALAYAM", time: "7.35" },
+                        { stage: "VIZHUTHAMANGALAM X ROAD", time: "7.45" },
+                        { stage: "NETHAPAKKAM", time: "7.50" },
+                        { stage: "POLAMPAKKAM", time: "7.55" },
+                        { stage: "CHITAMOOR", time: "8.00" },
+                        { stage: "POLAMPAKKAM/TVS", time: "8.10" },
+                        { stage: "SOTHUPAKKAM", time: "8.15" },
+                        { stage: "RAILWAY GATE", time: "8.20" },
+                        { stage: "MARKET", time: "8.30" },
+                        { stage: "MARUVATHUR BUS STOP", time: "8.35" },
+                        { stage: "MARUVOOR AVENUE", time: "8.40" },
+                        { stage: "ACHIRAPAKKAM ARCH", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 4,
+                    routeName: "CODALLORE",
+                    driver: "KUMAR.P",
+                    driverMobile: "6369779546",
+                    incharge: "DR.S.MADHU",
+                    inchargeMobile: "7305634746",
+                    stops: [
+                        { stage: "POST OFFICE", time: "7.05" },
+                        { stage: "MANJANKUPPAM", time: "7.10" },
+                        { stage: "CHECKPOST", time: "7.12" },
+                        { stage: "KANNIKOIL", time: "7.15" },
+                        { stage: "MG MEDICAL COLLAGE", time: "7.20" },
+                        { stage: "THAVALAKUPPAM", time: "7.25" },
+                        { stage: "ARIYANKUPPAM", time: "7.30" },
+                        { stage: "ARIYANKUPPAM MARKET", time: "7.35" },
+                        { stage: "MARAPALAM", time: "7.40" },
+                        { stage: "MURUGA THETHARE", time: "7.45" },
+                        { stage: "GORIMETU", time: "7.55" },
+                        { stage: "TOLLGATE", time: "8.00" },
+                        { stage: "TOLLGATE NEXT STOP", time: "8.05" },
+                        { stage: "PULICHAPALLAM BRIDGE", time: "8.10" },
+                        { stage: "RTO CHECKPOST ANDIPALAYAM", time: "8.15" },
+                        { stage: "KENIPATTU ROAD", time: "8.17" },
+                        { stage: "THERKUNAM BYEPASS", time: "8.20" },
+                        { stage: "OMANDUR", time: "8.25" },
+                        { stage: "MOLASUR ERIKARAI", time: "8.30" },
+                        { stage: "ARYAS HOTEL", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.05" }
+                    ]
+                },
+                {
+                    routeNumber: 5,
+                    routeName: "PANRUTI",
+                    driver: "RAJALINGAM",
+                    driverMobile: "8072377182",
+                    incharge: "DR.P.MURUGAMANI",
+                    inchargeMobile: "9976228498",
+                    stops: [
+                        { stage: "PANRUTI BUS STOP", time: "7.15" },
+                        { stage: "PANRUTI FOUR ROAD", time: "7.20" },
+                        { stage: "POONKUNAM", time: "7.25" },
+                        { stage: "RASAPALAYAM", time: "7.30" },
+                        { stage: "KALLIPATTU", time: "7.40" },
+                        { stage: "A K KUCHIPALAYAM", time: "7.45" },
+                        { stage: "KOLIYANUR", time: "8.00" },
+                        { stage: "MELPATHI", time: "8.10" },
+                        { stage: "VIKRAVANDI TOLL PLAZA", time: "8.20" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 6,
+                    routeName: "KADAPAKKAM",
+                    driver: "SUMAN",
+                    driverMobile: "9442773673",
+                    incharge: "MS.A.TAMILSELVI",
+                    inchargeMobile: "7708613693",
+                    stops: [
+                        { stage: "KADAPAKKAM", time: "8.00" },
+                        { stage: "KAPPIVAKAM", time: "8.10" },
+                        { stage: "KOTTAIKADU", time: "8.15" },
+                        { stage: "PALLAMPAKKAM", time: "8.20" },
+                        { stage: "SOONAMBEDU", time: "8.25" },
+                        { stage: "MANAPAKKAM", time: "8.30" },
+                        { stage: "VANNIYANALLUR", time: "8.35" },
+                        { stage: "ESUR", time: "8.40" },
+                        { stage: "SIRUMAILORE", time: "8.45" },
+                        { stage: "THUTHUVILAMPATU", time: "8.50" },
+                        { stage: "ATHUR", time: "8.55" },
+                        { stage: "THOZHUPEDU", time: "9.00" },
+                        { stage: "BOLLAMMA KULAM", time: "9.05" },
+                        { stage: "UNIVERSITY", time: "9.10" }
+                    ]
+                },
+                {
+                    routeNumber: 7,
+                    routeName: "VANDAVASI",
+                    driver: "RAHAMATHULLA",
+                    driverMobile: "8883483941",
+                    incharge: "MRS. K. KOWSALYA",
+                    inchargeMobile: "9585619289",
+                    stops: [
+                        { stage: "MUMMUNI KULAN VANDAVASI", time: "7.30" },
+                        { stage: "MUMMUNI", time: "7.35" },
+                        { stage: "AMMAIPATTU SCHOOL", time: "7.37" },
+                        { stage: "AMMAIPATTU EB OFFICE", time: "7.38" },
+                        { stage: "VANDAVASI OLD BUS STOP", time: "7.40" },
+                        { stage: "VANDAVASI OLD BUS STAND", time: "7.45" },
+                        { stage: "THERADI (VANDAVASI)", time: "7.46" },
+                        { stage: "NEW BUS STAND", time: "7.48" },
+                        { stage: "NEW BUS STAND VANDAVASI", time: "7.48" },
+                        { stage: "BIRUDUR", time: "7.50" },
+                        { stage: "KADAISIKULAM", time: "7.52" },
+                        { stage: "MARATHADU", time: "7.55" },
+                        { stage: "KALLANKUTHU", time: "8.00" },
+                        { stage: "KILKODUNKALURE", time: "8.05" },
+                        { stage: "KODUNKALURE", time: "8.06" },
+                        { stage: "REDDIPALAYAM BUS STOP", time: "8.08" },
+                        { stage: "RAMAPURAM BUS STOP", time: "8.12" },
+                        { stage: "RAMAPURAM", time: "8.15" },
+                        { stage: "SALAMEDU", time: "8.16" },
+                        { stage: "SENDIVAKKAM", time: "8.16" },
+                        { stage: "AGILI", time: "8.18" },
+                        { stage: "SOTHUPAKKAM (ARCH)", time: "8.20" },
+                        { stage: "SOTHUPAKKAM", time: "8.25" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 8,
+                    routeName: "MELMAIYANOOR",
+                    driver: "PRABAKARAN",
+                    driverMobile: "9066930535",
+                    incharge: "MR.T.RAJASEKAR",
+                    inchargeMobile: "9486220669",
+                    stops: [
+                        { stage: "MELMALAIYANOOR", time: "6.55" },
+                        { stage: "EZHIL", time: "7.10" },
+                        { stage: "SERAPATTU", time: "7.25" },
+                        { stage: "NEELAMPOONDI", time: "7.40" },
+                        { stage: "MAHADEVIMANGALAM", time: "7.45" },
+                        { stage: "KALAVAI X ROAD", time: "7.50" },
+                        { stage: "GINGEE GATE", time: "7.55" },
+                        { stage: "URANITHANGAL", time: "7.58" },
+                        { stage: "GINGEE TOLL GATE", time: "8.00" },
+                        { stage: "NATTARMANGALAM", time: "8.05" },
+                        { stage: "VALLAM", time: "8.08" },
+                        { stage: "KOLLAR", time: "8.18" },
+                        { stage: "TINDIVANAM GANTHI STATUE", time: "8.25" },
+                        { stage: "MIN NAGAR", time: "8.30" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 9,
+                    routeName: "SETHARAPATTU",
+                    driver: "RAJA.K",
+                    driverMobile: "7010560767",
+                    incharge: "MR.E.SUBASH",
+                    inchargeMobile: "7639910316",
+                    stops: [
+                        { stage: "SETHARAPATTU", time: "7.20" },
+                        { stage: "VANUR", time: "7.30" },
+                        { stage: "RANGANATHAPURAM", time: "7.40" },
+                        { stage: "V.PARANGANI", time: "7.45" },
+                        { stage: "KARASANUR", time: "7.50" },
+                        { stage: "PERUMBAKKAM", time: "7.55" },
+                        { stage: "THAZHUTHALI", time: "8.00" },
+                        { stage: "MAILAM", time: "8.10" },
+                        { stage: "KOLLIYAKUNAM", time: "8.13" },
+                        { stage: "KOOTERIPATTU", time: "8.20" },
+                        { stage: "OLAKKUR", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 10,
+                    routeName: "ANANTHAMANGALAM",
+                    driver: "VELU",
+                    driverMobile: "8148859247",
+                    incharge: "DR.S.NAZIYA BEGAM",
+                    inchargeMobile: "7502228620",
+                    stops: [
+                        { stage: "VAIRAPURAM", time: "7.45" },
+                        { stage: "ANANTHAMANGALAM", time: "7.50" },
+                        { stage: "THINNALUR", time: "8.10" },
+                        { stage: "METTUPALAYAM", time: "8.15" },
+                        { stage: "VINNAMPOONDI", time: "8.20" },
+                        { stage: "MAVALAVADI", time: "8.25" },
+                        { stage: "SEMBEDU", time: "8.30" },
+                        { stage: "ORATHY BUS STAND", time: "8.35" },
+                        { stage: "ORATHY", time: "8.36" },
+                        { stage: "KIL ORATHY", time: "8.40" },
+                        { stage: "ATHIVAKKAM X ROAD", time: "8.45" },
+                        { stage: "MINNAL CHITHAMUR", time: "8.50" },
+                        { stage: "MINNAL", time: "8.50" },
+                        { stage: "KADAMALAIPUTHUR 1", time: "8.52" },
+                        { stage: "KADAMALAIPUTHUR 2", time: "8.55" },
+                        { stage: "KADAMALAIPUTHUR 3", time: "8.55" },
+                        { stage: "KADAMALAIPUTHUR 4", time: "9.00" },
+                        { stage: "UNIVERSITY", time: "9.05" }
+                    ]
+                },
+                {
+                    routeNumber: 11,
+                    routeName: "KOTTAKUPPAM",
+                    driver: "SAKTHI",
+                    driverMobile: "9751521857",
+                    incharge: "S.KAYALVIZHI",
+                    inchargeMobile: "7418501062",
+                    stops: [
+                        { stage: "CHINNA MUTHALIYAR CHAVATY", time: "7.00" },
+                        { stage: "PERIYA MUTHALIYAR CHAVATY", time: "7.05" },
+                        { stage: "KEEZPUTHUPATTU", time: "7.15" },
+                        { stage: "ANUMANTHAI", time: "7.20" },
+                        { stage: "KEEZPETTAI (MURUGAN KOIL)", time: "7.25" },
+                        { stage: "MADAVAI KUPPAM", time: "7.30" },
+                        { stage: "MARAKKANAM (ECR)", time: "7.35" },
+                        { stage: "MARAKKANAM (BHOOMEESWARAN KOIL)", time: "7.40" },
+                        { stage: "MARAKKANAM (BAKERY)", time: "7.42" },
+                        { stage: "KANTHADU", time: "7.45" },
+                        { stage: "KANTHADU (PALAM)", time: "7.50" },
+                        { stage: "MURUKERI", time: "8.00" },
+                        { stage: "SINGANANTHAL", time: "8.02" },
+                        { stage: "ALANKUPPAM", time: "8.05" },
+                        { stage: "ALANKUPPAM", time: "8.07" },
+                        { stage: "VADANERKUNAM KOIL", time: "8.10" },
+                        { stage: "VADANERKUNAM", time: "8.15" },
+                        { stage: "AVANIPUR", time: "8.25" },
+                        { stage: "AAPAKKAM ROAD", time: "8.30" },
+                        { stage: "KONARIKUPPAM", time: "8.35" },
+                        { stage: "KONARIKUPPAM XROAD", time: "8.40" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 12,
+                    routeName: "UTHIRAMERUR",
+                    driver: "",
+                    driverMobile: "",
+                    incharge: "",
+                    inchargeMobile: "",
+                    stops: [
+                        { stage: "UTHIRAMERUR", time: "7.40" },
+                        { stage: "UTHIRAMERUR BUS STAND", time: "7.42" },
+                        { stage: "ENDATHUR", time: "8.20" },
+                        { stage: "ELAPAKKAM BUS STOP", time: "8.25" },
+                        { stage: "MADHUR", time: "8.30" },
+                        { stage: "THIRUMUKKUADU", time: "8.35" },
+                        { stage: "ACHARAPAKKAM MATHA KOIL", time: "8.45" },
+                        { stage: "ACHARAPAKKAM BRIDGE", time: "8.50" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 13,
+                    routeName: "UPPUVELLORE",
+                    driver: "MANJINI",
+                    driverMobile: "9629158389",
+                    incharge: "MS.S.LAVANYA",
+                    inchargeMobile: "7604976013",
+                    stops: [
+                        { stage: "KARATTAI", time: "7.30" },
+                        { stage: "UPPUVELLORE", time: "7.35" },
+                        { stage: "PUDUKUPPAM", time: "7.40" },
+                        { stage: "PARANGINI", time: "7.45" },
+                        { stage: "PUDHUR", time: "7.50" },
+                        { stage: "ULAGAPURAM", time: "7.55" },
+                        { stage: "NALLALAM", time: "8.00" },
+                        { stage: "KATTALAI", time: "8.05" },
+                        { stage: "MAANUR", time: "8.07" },
+                        { stage: "APPASAMY NAGAR", time: "8.13" },
+                        { stage: "ENDIYUR", time: "8.20" },
+                        { stage: "MARAKKANAM ROAD", time: "8.25" },
+                        { stage: "MELPATTAI", time: "8.30" },
+                        { stage: "PATHIRI", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 14,
+                    routeName: "MADAGADIPATTU",
+                    driver: "PURUSHOTHAMAN",
+                    driverMobile: "9894778181",
+                    incharge: "V.ARTHY",
+                    inchargeMobile: "7339176956",
+                    stops: [
+                        { stage: "MADAGADIPATTU HOSPITAL", time: "7.00" },
+                        { stage: "KALITHEERTHALKUPPAM", time: "7.30" },
+                        { stage: "PS PALAYAM", time: "7.32" },
+                        { stage: "THIRUMANGALAM X ROAD", time: "7.35" },
+                        { stage: "THIRUKANUR (ARUN BAKERY)", time: "7.40" },
+                        { stage: "THIRUKANUR (PETROL BUNK)", time: "7.42" },
+                        { stage: "THIRUKANUR (CHECK POST)", time: "7.45" },
+                        { stage: "MATHURAPAKKAM", time: "7.58" },
+                        { stage: "M KUCHIPALAYAM", time: "8.02" },
+                        { stage: "RADHAPURAM", time: "8.05" },
+                        { stage: "VETTUKADU", time: "8.07" },
+                        { stage: "VETUKADI SALAI", time: "8.09" },
+                        { stage: "SIRUVALLIKUPPAM", time: "8.11" },
+                        { stage: "THORAVI", time: "8.13" },
+                        { stage: "THORAVI CHECK POST", time: "8.15" },
+                        { stage: "PANAYAPURAM", time: "8.17" },
+                        { stage: "PANAYAPURAM X ROAD", time: "8.19" },
+                        { stage: "VIKRAVANDI TOLLGATE", time: "8.21" },
+                        { stage: "PALAPATTU", time: "8.35" },
+                        { stage: "VILANGAMPADI", time: "8.37" },
+                        { stage: "CHINNA NERKUNAM", time: "8.40" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 15,
+                    routeName: "THIRUKOILUR",
+                    driver: "SRINIVASAN",
+                    driverMobile: "9710656646",
+                    incharge: "S.DHANALAKSHMI",
+                    inchargeMobile: "8754004806",
+                    stops: [
+                        { stage: "THIRUKOVILORE", time: "7.00" },
+                        { stage: "ARAGANDANALLURE", time: "7.10" },
+                        { stage: "MUGAIYOOR", time: "7.30" },
+                        { stage: "AYANDUR", time: "7.40" },
+                        { stage: "MAMBAZHAPATTU", time: "7.45" },
+                        { stage: "PERUMPAKKAM", time: "7.55" },
+                        { stage: "THOKAIPADI", time: "8.00" },
+                        { stage: "PALAYAM", time: "8.00" },
+                        { stage: "GINGEE ROAD", time: "8.10" },
+                        { stage: "MUNDIYAMPAKKAM", time: "8.15" },
+                        { stage: "MUNDIYAMPAKKAM A2B", time: "8.18" },
+                        { stage: "AMMA TEA TIME", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 16,
+                    routeName: "KILIYANOOR",
+                    driver: "SUNDAR",
+                    driverMobile: "8122965340",
+                    incharge: "MRS.UMA",
+                    inchargeMobile: "9600320173",
+                    stops: [
+                        { stage: "KODUR", time: "7.30" },
+                        { stage: "THAILAPURAM", time: "7.45" },
+                        { stage: "KILIYANOOR", time: "7.55" },
+                        { stage: "KONTHAMOOR", time: "8.05" },
+                        { stage: "THENKODIPAKKAM", time: "8.15" },
+                        { stage: "MOLASUR", time: "8.20" },
+                        { stage: "ENDIYUR", time: "8.25" },
+                        { stage: "ERAIYANOOR", time: "8.30" },
+                        { stage: "ST JOSHEP BRIDGE", time: "8.35" },
+                        { stage: "EB OFFICE", time: "8.40" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 17,
+                    routeName: "NADUKUPPAM",
+                    driver: "JAYARAJ",
+                    driverMobile: "9600259200",
+                    incharge: "R.SRIVIDYA",
+                    inchargeMobile: "9566549956",
+                    stops: [
+                        { stage: "NADUKUPPAM", time: "7.40" },
+                        { stage: "ADASAL", time: "7.45" },
+                        { stage: "KOLATHUR", time: "7.50" },
+                        { stage: "SENTHAMANGALAM X ROAD", time: "7.55" },
+                        { stage: "PUTHUPAKKAM", time: "8.00" },
+                        { stage: "RAJAMPALAYAM", time: "8.05" },
+                        { stage: "BRAMMATHESAM", time: "8.10" },
+                        { stage: "HOUSING BOARD", time: "8.15" },
+                        { stage: "INDHRA NAGAR", time: "8.20" },
+                        { stage: "END HOSPITAL", time: "8.25" },
+                        { stage: "JAYAPURAM", time: "8.30" },
+                        { stage: "PERIYAR DEPO", time: "8.35" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 18,
+                    routeName: "KILPENNATHUR",
+                    driver: "THIYAGARAJAN",
+                    driverMobile: "8939606427",
+                    incharge: "R.S.SUBIKSHA",
+                    inchargeMobile: "7397169360",
+                    stops: [
+                        { stage: "GINGEE", time: "8.00" },
+                        { stage: "KALIYUR", time: "8.10" },
+                        { stage: "DEEVANUR", time: "8.20" },
+                        { stage: "MELPERADIKUPPAM", time: "8.22" },
+                        { stage: "SALAI", time: "8.24" },
+                        { stage: "PV POLYTECHNIC", time: "8.25" },
+                        { stage: "SIPCOT", time: "8.30" },
+                        { stage: "SANTHAIMEDU", time: "8.35" },
+                        { stage: "GNM PETROL BUNK", time: "8.40" },
+                        { stage: "COMMITTEE", time: "8.45" },
+                        { stage: "SALAVATHY", time: "8.50" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 19,
+                    routeName: "RETTANAI",
+                    driver: "G.ARUN KUMAR",
+                    driverMobile: "9360630831",
+                    incharge: "MR.T.ANGAMUTHU",
+                    inchargeMobile: "9597153170",
+                    stops: [
+                        { stage: "RETTANI", time: "7.45" },
+                        { stage: "KODIMA", time: "8.15" },
+                        { stage: "ALAGRAMAM 1", time: "8.25" },
+                        { stage: "ALAGRAMAM 2", time: "8.28" },
+                        { stage: "ALAGRAMAM 3", time: "8.31" },
+                        { stage: "SOSHAKULAM", time: "8.34" },
+                        { stage: "KOOTTARIPATTU", time: "8.40" },
+                        { stage: "KANNIGAPURAM", time: "8.42" },
+                        { stage: "KENIPATTU", time: "8.43" },
+                        { stage: "THENPASIYAR", time: "8.44" },
+                        { stage: "JAKKAMPETTAI", time: "8.45" },
+                        { stage: "TINDIVANAM 1", time: "8.48" },
+                        { stage: "KAVERIPAKKAM 2", time: "8.50" },
+                        { stage: "MRS MAHAL 3", time: "8.51" },
+                        { stage: "AMMA MAHAL 4", time: "8.52" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 20,
+                    routeName: "THELLAR",
+                    driver: "K. ARUL",
+                    driverMobile: "9600114170",
+                    incharge: "K,KANCHANA",
+                    inchargeMobile: "9585010746",
+                    stops: [
+                        { stage: "THELLAR COLLAGE", time: "7.40" },
+                        { stage: "THELLAR POLICE STATION", time: "8.00" },
+                        { stage: "THELLAR KODIMARAM", time: "8.02" },
+                        { stage: "SU KADDARI", time: "8.18" },
+                        { stage: "VELLIMEDUPETTAI", time: "8.20" },
+                        { stage: "DHATHAPURAM X ROAD", time: "8.23" },
+                        { stage: "KODIYAM X ROAD", time: "8.24" },
+                        { stage: "GOVINTHAPURAM", time: "8.25" },
+                        { stage: "URAL", time: "8.27" },
+                        { stage: "URAL BUS STOP", time: "8.29" },
+                        { stage: "PADNAM", time: "8.30" },
+                        { stage: "SANTHAIMEDU", time: "8.31" },
+                        { stage: "TINDIVANAM BYEBASS", time: "8.33" },
+                        { stage: "AYYANTHOPPU", time: "8.35" },
+                        { stage: "AYYANTHOPPU BUS STOP", time: "8.38" },
+                        { stage: "AYYANTHOPPU COLLAGE", time: "8.40" },
+                        { stage: "PANCHALAM", time: "8.45" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 21,
+                    routeName: "CHEYYUR (ECR)",
+                    driver: "THANIGAVEL",
+                    driverMobile: "9655825259",
+                    incharge: "PRASANNA KUMAR",
+                    inchargeMobile: "7094298005",
+                    stops: [
+                        { stage: "CHEYYUR", time: "7.15" },
+                        { stage: "PUTHUR X ROAD", time: "7.20" },
+                        { stage: "NALLUR X ROAD", time: "7.25" },
+                        { stage: "ONAMBAKAM", time: "7.30" },
+                        { stage: "KANIMANGALAM", time: "7.35" },
+                        { stage: "POORIMBAKAM", time: "7.40" },
+                        { stage: "MONGABAL", time: "7.45" },
+                        { stage: "PERIYAKALAKADI 1", time: "7.50" },
+                        { stage: "PERIYAKALAKADI 2", time: "7.55" },
+                        { stage: "PUDNUR", time: "8.00" },
+                        { stage: "PERUKARANAI", time: "8.05" },
+                        { stage: "THANDALAM", time: "8.10" },
+                        { stage: "VENKATESWARAN ANJANEYAR KOIL", time: "8.15" },
+                        { stage: "VENKATESWARAM IYYANAR KOIL", time: "8.20" },
+                        { stage: "ACHARAPAKKAM ARCH", time: "8.25" },
+                        { stage: "ACHARAPAKKAM BUS STAND", time: "8.30" },
+                        { stage: "ACHARAPAKKAM SCHOOL", time: "8.35" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 22,
+                    routeName: "CHENGALPATTU",
+                    driver: "AJITH",
+                    driverMobile: "8870164623",
+                    incharge: "DR.K. GURU",
+                    inchargeMobile: "9994260833",
+                    stops: [
+                        { stage: "IYYAPAN KOIL", time: "7.45" },
+                        { stage: "CHENGALPATTU BUS STAND", time: "7.50" },
+                        { stage: "CHENGALPATTU HOSPITAL", time: "7.55" },
+                        { stage: "PUGATHORAI", time: "8.05" },
+                        { stage: "KALLAPRAMPURAM", time: "8.15" },
+                        { stage: "MELVALANPETTAI", time: "8.20" },
+                        { stage: "KAKILAPETTAI", time: "8.25" },
+                        { stage: "MADURANTHAGAM BUS STOP", time: "8.30" },
+                        { stage: "DEPOT", time: "8.32" },
+                        { stage: "ONAMALAI", time: "8.37" },
+                        { stage: "SIRUNGALUR", time: "8.42" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 23,
+                    routeName: "TINDIVANAM (GINGEE BUS STAND)",
+                    driver: "CONTRACT VEHICLE",
+                    driverMobile: "",
+                    incharge: "R.SARANYA",
+                    inchargeMobile: "8056476979",
+                    stops: [
+                        { stage: "GINGEE BUS STAND", time: "8.30" },
+                        { stage: "GANDHI STATUE", time: "8.35" },
+                        { stage: "KOOCHIKOLATHUR", time: "8.50" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 24,
+                    routeName: "TINDIVANAM (WOMENS POLICE STATION)",
+                    driver: "CONTRACT VEHICLE",
+                    driverMobile: "",
+                    incharge: "DR.A. SURIYANARAYANAN",
+                    inchargeMobile: "9442225137",
+                    stops: [
+                        { stage: "WOMENS POLICE STATION", time: "8.35" },
+                        { stage: "VEERAPPA BUNK", time: "8.40" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                },
+                {
+                    routeNumber: 25,
+                    routeName: "VILLUPURAM",
+                    driver: "AYYANAR",
+                    driverMobile: "9047108520",
+                    incharge: "MRS.BHOOSHINI",
+                    inchargeMobile: "9994116328",
+                    stops: [
+                        { stage: "OLD BUS STAND", time: "7.30" },
+                        { stage: "GANDHI STATUE", time: "7.33" },
+                        { stage: "RAILWAY JUNCTION", time: "7.36" },
+                        { stage: "MADHA KOIL", time: "7.40" },
+                        { stage: "SAVITHA THEATER", time: "7.43" },
+                        { stage: "REDDIYAR MILL", time: "7.46" },
+                        { stage: "MAHARAJAPURAM", time: "7.50" },
+                        { stage: "HOUSING BOURD", time: "7.53" },
+                        { stage: "RAGAVAN PETTAI", time: "7.56" },
+                        { stage: "MARIYAMMAN KOIL", time: "7.59" },
+                        { stage: "VIKKARAVANDI BUS STAND", time: "8.02" },
+                        { stage: "PERANI", time: "8.05" },
+                        { stage: "VIKKARAVANDI TALUK OFFICE", time: "8.12" },
+                        { stage: "CHENDUR", time: "8.20" },
+                        { stage: "SARAM 1", time: "8.40" },
+                        { stage: "SARAM 2", time: "8.42" },
+                        { stage: "UNIVERSITY", time: "9.00" }
+                    ]
+                }
+            ]
         };
     }
 
@@ -167,6 +824,11 @@ class ChatApp {
     generateAIResponse(userMessage) {
         const message = userMessage.toLowerCase().trim();
         const uniInfo = this.getUniversityInfo();
+        
+        // BUS ROUTE QUESTIONS - High priority check
+        if (message.match(/(bus|route|pickup|pick up|bus stop|transport|driver|incharge|timing|schedule|thiruvennainallur|villiyanur|koovathur|codallore|panruti|kadapakkam|vandavasi|melmaiyanoor|setharapattu|ananthamangalam|kottakuppam|uthiramerur|uppuvellore|madagadipattu|thirukoilur|kiliyanoor|nadukuppam|kilpennathur|rettanai|thellar|cheyyur|chengalpattu|tindivanam|villupuram)/)) {
+            return this.getBusResponse(message, uniInfo);
+        }
         
         // TAKSHASHILA UNIVERSITY QUESTIONS - Priority check
         if (message.match(/(takshashila|university|college|admission|course|program|faculty|school|department|location|address|contact|website|vision|mission|facilities|hostel|library|lab|research|accreditation|ugc|established|founder|promoting|group|manakula|vinayagar|club|clubs|arts club|media club|innopreneur|iq club|nature club|innovation club|coding club|manasso|robotics club|photography club|health club)/)) {
@@ -435,6 +1097,203 @@ class ChatApp {
         return `🔹 Clubs at ${uniInfo.name}:\n\n⏰ All clubs meet on: ${clubs.commonTime}\n\nAvailable clubs:\n${clubs.list.map((c, i) => `${i + 1}. ${c.name}`).join('\n')}\n\nWould you like to know more about a specific club or their room numbers?`;
     }
 
+    // Get Bus Route-specific responses
+    getBusResponse(message, uniInfo) {
+        const msg = message.toLowerCase();
+        const routes = uniInfo.busRoutes;
+        
+        // Create a map of all stops with their routes for quick lookup
+        const stopToRoutes = {};
+        routes.forEach(route => {
+            route.stops.forEach(stop => {
+                const stopName = stop.stage.toLowerCase();
+                if (!stopToRoutes[stopName]) {
+                    stopToRoutes[stopName] = [];
+                }
+                stopToRoutes[stopName].push({
+                    route: route,
+                    stop: stop
+                });
+            });
+        });
+        
+        // Check for specific route name queries
+        const routeKeywords = {
+            'thiruvennainallur': 1,
+            'villiyanur': 2,
+            'koovathur': 3,
+            'codallore': 4,
+            'panruti': 5,
+            'kadapakkam': 6,
+            'vandavasi': 7,
+            'melmaiyanoor': 8,
+            'melmalaiyanoor': 8,
+            'setharapattu': 9,
+            'ananthamangalam': 10,
+            'kottakuppam': 11,
+            'uthiramerur': 12,
+            'uppuvellore': 13,
+            'madagadipattu': 14,
+            'thirukoilur': 15,
+            'thirukovilore': 15,
+            'kiliyanoor': 16,
+            'nadukuppam': 17,
+            'kilpennathur': 18,
+            'rettanai': 19,
+            'rettani': 19,
+            'thellar': 20,
+            'cheyyur': 21,
+            'chengalpattu': 22,
+            'tindivanam': 23,
+            'villupuram': 25
+        };
+        
+        // Check for route number query
+        const routeNumMatch = msg.match(/route\s*(\d+)/);
+        if (routeNumMatch) {
+            const routeNum = parseInt(routeNumMatch[1]);
+            const route = routes.find(r => r.routeNumber === routeNum);
+            if (route) {
+                return this.formatRouteDetails(route);
+            }
+        }
+        
+        // Check for specific route name
+        for (const [keyword, routeNum] of Object.entries(routeKeywords)) {
+            if (msg.includes(keyword)) {
+                const route = routes.find(r => r.routeNumber === routeNum);
+                if (route) {
+                    return this.formatRouteDetails(route);
+                }
+            }
+        }
+        
+        // Check for bus stop/location queries
+        for (const [stopName, routeStops] of Object.entries(stopToRoutes)) {
+            // Check if message contains this stop name (with some flexibility)
+            const stopWords = stopName.split(/\s+/);
+            let matchCount = 0;
+            for (const word of stopWords) {
+                if (word.length > 3 && msg.includes(word)) {
+                    matchCount++;
+                }
+            }
+            
+            // If at least one significant word matches, consider it a match
+            if (matchCount > 0 || msg.includes(stopName.substring(0, Math.min(8, stopName.length)))) {
+                if (routeStops.length === 1) {
+                    const { route, stop } = routeStops[0];
+                    return this.formatStopDetails(route, stop, routeStops);
+                } else {
+                    // Multiple routes serve this stop
+                    let response = `🚌 Bus Stop: ${routeStops[0].stop.stage}\n\n`;
+                    response += `This stop is served by ${routeStops.length} route(s):\n\n`;
+                    routeStops.forEach(({ route, stop }, index) => {
+                        response += `${index + 1}. Route ${route.routeNumber} - ${route.routeName}\n`;
+                        response += `   ⏰ Pickup Time: ${stop.time}\n`;
+                        if (route.driver) {
+                            response += `   👤 Driver: ${route.driver} (${route.driverMobile})\n`;
+                        }
+                        response += `\n`;
+                    });
+                    return response;
+                }
+            }
+        }
+        
+        // Check for driver/incharge queries
+        if (msg.match(/(driver|incharge|contact|mobile|phone)/)) {
+            const driverMatch = routes.find(route => 
+                route.driver && msg.includes(route.driver.toLowerCase())
+            );
+            if (driverMatch) {
+                return this.formatRouteDetails(driverMatch);
+            }
+            
+            const inchargeMatch = routes.find(route => 
+                route.incharge && msg.includes(route.incharge.toLowerCase().replace(/mr\.|mrs\.|ms\.|dr\./g, '').trim())
+            );
+            if (inchargeMatch) {
+                return this.formatRouteDetails(inchargeMatch);
+            }
+        }
+        
+        // List all routes
+        if (msg.match(/(list|all|what|which|available|show).*(bus|route|transport)/)) {
+            let response = `🚌 Bus Routes at ${uniInfo.name}:\n\n`;
+            response += `There are ${routes.length} bus routes available:\n\n`;
+            routes.forEach((route, index) => {
+                response += `${route.routeNumber}. ${route.routeName}\n`;
+                if (route.stops.length > 0) {
+                    response += `   First Stop: ${route.stops[0].stage} at ${route.stops[0].time}\n`;
+                    response += `   University: ${route.stops[route.stops.length - 1].time}\n`;
+                }
+                response += `\n`;
+            });
+            response += `\nYou can ask about a specific route, bus stop, or location for detailed information!`;
+            return response;
+        }
+        
+        // General bus information
+        return `🚌 Bus Transportation at ${uniInfo.name}:\n\nWe have ${routes.length} bus routes serving various locations. You can ask me about:\n• Specific routes (e.g., "Route 1" or "Thiruvennainallur route")\n• Bus stops or pickup locations\n• Route timings and schedules\n• Driver and incharge contact information\n\nWhich route or location would you like to know about?`;
+    }
+    
+    // Format route details
+    formatRouteDetails(route) {
+        let response = `🚌 Route ${route.routeNumber} - ${route.routeName}\n\n`;
+        
+        if (route.driver) {
+            response += `👤 Driver: ${route.driver}`;
+            if (route.driverMobile) {
+                response += ` (${route.driverMobile})`;
+            }
+            response += `\n`;
+        }
+        
+        if (route.incharge) {
+            response += `👨‍💼 Incharge: ${route.incharge}`;
+            if (route.inchargeMobile) {
+                response += ` (${route.inchargeMobile})`;
+            }
+            response += `\n`;
+        }
+        
+        response += `\n📍 Route Stops and Timings:\n\n`;
+        route.stops.forEach((stop, index) => {
+            response += `${index + 1}. ${stop.stage} - ${stop.time}\n`;
+        });
+        
+        return response;
+    }
+    
+    // Format stop details
+    formatStopDetails(route, stop, routeStops) {
+        let response = `🚌 Bus Stop: ${stop.stage}\n\n`;
+        response += `📍 Route: ${route.routeNumber} - ${route.routeName}\n`;
+        response += `⏰ Pickup Time: ${stop.time}\n\n`;
+        
+        // Show nearby stops
+        const stopIndex = route.stops.findIndex(s => s.stage === stop.stage);
+        if (stopIndex !== -1) {
+            response += `Nearby Stops:\n`;
+            if (stopIndex > 0) {
+                response += `• Previous: ${route.stops[stopIndex - 1].stage} (${route.stops[stopIndex - 1].time})\n`;
+            }
+            if (stopIndex < route.stops.length - 1) {
+                response += `• Next: ${route.stops[stopIndex + 1].stage} (${route.stops[stopIndex + 1].time})\n`;
+            }
+        }
+        
+        if (route.driver && route.driverMobile) {
+            response += `\n👤 Driver: ${route.driver} (${route.driverMobile})\n`;
+        }
+        if (route.incharge && route.inchargeMobile) {
+            response += `👨‍💼 Incharge: ${route.incharge} (${route.inchargeMobile})\n`;
+        }
+        
+        return response;
+    }
+
     // Get contextual response based on message content
     getContextualResponse(message) {
         const lowerMsg = message.toLowerCase();
@@ -536,11 +1395,21 @@ class ChatApp {
 
     // Show welcome message from Gopal
     showWelcomeMessage() {
-        // Check if this is first time (no messages)
-        if (this.messages.length === 0) {
+        // Check if this is first time (no messages) and no user name is set
+        if (this.messages.length === 0 && !this.userName) {
             const welcomeMessage = {
                 id: 'welcome-' + Date.now().toString(),
-                text: `Hello! I'm ${this.aiName}, your AI assistant. I'm here to help you with anything you need! 🎓\n\nI can help you with:\n• Information about Takshashila University\n• General questions and conversations\n• Math calculations\n• Various topics like technology, education, sports, and more\n\nFeel free to ask me anything! What would you like to know?`,
+                text: `Hello! I'm ${this.aiName}, your AI assistant. I'm here to help you with anything you need! 🎓\n\nBefore we start, could you please tell me your name?`,
+                sender: 'ai',
+                timestamp: new Date().toISOString()
+            };
+            this.messages.push(welcomeMessage);
+            this.saveMessages();
+            this.displayMessages();
+        } else if (this.messages.length === 0 && this.userName) {
+            const welcomeMessage = {
+                id: 'welcome-' + Date.now().toString(),
+                text: `Hello ${this.userName}! I'm ${this.aiName}, your AI assistant. I'm here to help you with anything you need! 🎓\n\nI can help you with:\n• Information about Takshashila University\n• Bus route details and timings\n• Club information\n• General questions and conversations\n• Math calculations\n• Various topics like technology, education, sports, and more\n\nFeel free to ask me anything! What would you like to know?`,
                 sender: 'ai',
                 timestamp: new Date().toISOString()
             };
@@ -574,7 +1443,7 @@ class ChatApp {
             });
 
             const isAI = message.sender === 'ai';
-            const senderName = isAI ? this.aiName : 'You';
+            const senderName = isAI ? this.aiName : (this.userName || 'You');
             const messageClass = isAI ? 'message ai-message' : 'message user-message';
 
             return `
@@ -694,6 +1563,18 @@ class ChatApp {
     loadTheme() {
         const saved = localStorage.getItem('letsChatTheme');
         return saved || 'light';
+    }
+
+    // User Name Management
+    saveUserName() {
+        if (this.userName) {
+            localStorage.setItem('letsChatUserName', this.userName);
+        }
+    }
+
+    loadUserName() {
+        const saved = localStorage.getItem('letsChatUserName');
+        return saved || null;
     }
 }
 
